@@ -2,31 +2,6 @@
 - name: Initial setup
   hosts: web_servers
   roles:
+    - agama
+    - uwsgi
     - nginx
-
-  tasks:    
-    - name: Add user named Juri
-      ansible.builtin.user:
-        name: juri
-        shell: /bin/bash
-      
-    - name: Add user named Roman
-      ansible.builtin.user:
-        name: roman
-        shell: /bin/bash
-
-    - name: Add ssh key for user Juri
-      ansible.posix.authorized_key:
-        user: juri
-        state: present
-        key: https://github.com/hudolejev.keys
-  
-    - name: Add ssh key for user Roman
-      ansible.posix.authorized_key:
-        user: roman
-        state: present
-        key: https://github.com/romankuchin.keys
-
-    - name: Update APT Cache
-      ansible.builtin.apt:
-        cache_valid_time: 86400

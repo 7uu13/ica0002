@@ -1,0 +1,36 @@
+---
+- name: Update APT Cache
+  ansible.builtin.apt:
+    cache_valid_time: 86400
+
+- name: Install uWSGI and uWSGI plugin for Python 3
+  ansible.builtin.apt:
+    name:
+      - uwsgi
+      - uwsgi-plugin-python3
+    state: present
+
+- name: Create uWSGI directory
+  ansible.builtin.file:
+    path: /etc/uwsgi/apps-enabled
+    state: directory
+    owner: agama
+    group: agama
+    mode: '0750'
+  become: true
+
+- name: Copy local Agama configuration file
+  ansible.builtin.copy:
+    src: /home/johan/Documents/school/taltech/programming/it-infra/ica0002/roles/uwsgi/files/agama.ini
+    dest: /etc/uwsgi/apps-enabled/agama.ini
+    owner: agama
+    group: agama
+    mode: '0750'
+  become: true
+  notify: Restart uWSGI service
+
+- name: Ensure uWSGI service is started and enabled
+  ansible.builtin.service:
+    name: uwsgi
+    state: started
+    enabled: true

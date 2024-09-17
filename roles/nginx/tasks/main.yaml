@@ -3,3 +3,15 @@
   ansible.builtin.apt:
     name: nginx
     state: present
+
+- name: Copy local Nginx configuration file
+  ansible.builtin.copy:
+    src: /home/johan/Documents/school/taltech/programming/it-infra/ica0002/roles/nginx/files/default
+    dest: /etc/nginx/sites-enabled/default
+  notify: Restart Nginx service
+
+- name: Ensure Nginx service is started and enabled
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true

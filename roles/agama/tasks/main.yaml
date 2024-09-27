@@ -9,8 +9,6 @@
     owner: agama
     group: agama
     state: directory
-    mode: '0750'
-  become: true
 
 - name: Update APT Cache
   ansible.builtin.apt:
@@ -18,7 +16,9 @@
 
 - name: Install Agame and its dependencies
   ansible.builtin.apt:
-    name: python3-flask-sqlalchemy
+    name:
+      - python3-flask-sqlalchemy
+      - python3-pymysql
     state: present
 
 - name: Install Agame.py
@@ -27,5 +27,3 @@
     dest: /opt/agama
     owner: agama
     group: agama
-    mode: '0750'
-  become: true

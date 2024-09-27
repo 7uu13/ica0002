@@ -16,16 +16,14 @@
     state: directory
     owner: agama
     group: agama
-    mode: '0750'
-  become: true
 
 - name: Copy local Agama configuration file
-  ansible.builtin.copy:
-    src: /home/johan/Documents/school/taltech/programming/it-infra/ica0002/roles/uwsgi/files/agama.ini
+  ansible.builtin.template:
+    src: templates/agama.ini.j2
     dest: /etc/uwsgi/apps-enabled/agama.ini
     owner: agama
     group: agama
-    mode: '0750'
+    mode: '0600'
   become: true
   notify: Restart uWSGI service
 

@@ -1,4 +1,13 @@
 ---
+- name: Update APT Cache
+  ansible.builtin.apt:
+    cache_valid_time: 86400
+
+- name: Install nvim
+  ansible.builtin.apt:
+    name: neovim
+    state: present
+
 - name: Add user named Juri
   ansible.builtin.user:
     name: juri

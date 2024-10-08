@@ -1,10 +1,16 @@
 ---
-# Add init later on
 - name: Init
   hosts: all
   roles:
     - init
-    
+
+- name: DNS Server
+  hosts: dns_servers
+  gather_facts: yes
+  roles:
+    - bind
+  tags: d
+
 - name: Database Server
   hosts: db_servers
   roles:

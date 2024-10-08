@@ -12,7 +12,7 @@
 
 - name: Override Default Bind-Addr
   ansible.builtin.copy:
-    src: /home/johan/Documents/school/taltech/programming/it-infra/ica0002/roles/mysql/files/override.cnf
+    src: override.cnf
     dest: /etc/mysql/mysql.conf.d/override.cnf
   notify: Restart MySql service
 

@@ -8,7 +8,7 @@
   ansible.builtin.copy:
     src: /home/johan/Documents/school/taltech/programming/it-infra/ica0002/roles/nginx/files/default
     dest: /etc/nginx/sites-enabled/default
-  notify: Restart Nginx service
+  notify: Restart Nginx Service
 
 - name: Ensure Nginx service is started and enabled
   ansible.builtin.service:

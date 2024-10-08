@@ -1,0 +1,29 @@
+---
+- name: Gather facts
+  ansible.builtin.setup:
+
+- name: Update APT Cache
+  ansible.builtin.apt:
+    cache_valid_time: 86400
+
+- name: Install bind9
+  ansible.builtin.apt:
+    name: bind9
+    state: present
+
+- name: Configure DNS forwarders
+  ansible.builtin.copy:
+    src: named.conf.options
+    dest: /etc/bind/named.conf.options
+  notify: Restart Bind9 Service
+
+- name: Configure DNS Master Zone
+  ansible.builtin.template:
+    src: db.lockbox.sec.j2
+    dest: /var/cache/bind/db.{{ startup_name }}
+
+- name: Ensure bind9 service is started and enabled
+  ansible.builtin.service:
+    name: bind9
+    state: started
+    enabled: true

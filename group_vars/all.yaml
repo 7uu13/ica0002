@@ -1,5 +1,5 @@
 # MySql connection parameters
-mysql_host: 192.168.42.115
+mysql_host: 192.168.42.16
 mysql_database: agama
 mysql_user: agama
 mysql_password: !vault |
@@ -10,3 +10,5 @@ mysql_password: !vault |
           6361346266336661390a663132366131666230323531633363656364613062326435333335306330
           3066
 
+
+startup_name: lockbox.sec

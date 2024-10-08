@@ -1,0 +1,11 @@
+$TTL	604800
+{{ startup_name }}. 	IN	SOA	7uu13-2.{{ startup_name }}. tuule.{{ startup_name }}. (
+			      2		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+{{ startup_name }}.	IN	NS	7uu13-2
+7uu13-1	IN	A {{ hostvars['7uu13-1']['ansible_default_ipv4']['address'] }}
+7uu13-2	IN	A	{{ hostvars['7uu13-2']['ansible_default_ipv4']['address'] }}

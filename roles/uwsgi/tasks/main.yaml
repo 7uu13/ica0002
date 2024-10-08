@@ -25,7 +25,7 @@
     group: agama
     mode: '0600'
   become: true
-  notify: Restart uWSGI service
+  notify: Restart uWSGI Service
 
 - name: Ensure uWSGI service is started and enabled
   ansible.builtin.service:

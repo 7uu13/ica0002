@@ -32,4 +32,9 @@ options {
         dnssec-validation auto;
 
         listen-on-v6 { any; };
+        zone "master" {
+          type primary;
+          file "/var/cache/bind/db.lockbox.sec"
+          notify no;
+        };
 };

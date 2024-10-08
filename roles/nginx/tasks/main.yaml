@@ -6,7 +6,7 @@
 
 - name: Copy local Nginx configuration file
   ansible.builtin.copy:
-    src: /home/johan/Documents/school/taltech/programming/it-infra/ica0002/roles/nginx/files/default
+    src: default
     dest: /etc/nginx/sites-enabled/default
   notify: Restart Nginx Service
 

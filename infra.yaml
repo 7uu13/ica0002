@@ -13,11 +13,19 @@
 
 - name: Database Server
   hosts: db_servers
+  gather_facts: yes
+  tags: db
   roles:
     - mysql
 
+- name: Configure DNS
+  hosts: db_servers:web_servers
+  roles:
+    - dns
+
 - name: Web Server
   hosts: web_servers
+  gather_facts: yes
   roles:
     - agama
     - uwsgi

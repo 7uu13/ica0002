@@ -1,5 +1,5 @@
 # MySql connection parameters
-mysql_host: 192.168.42.16
+mysql_host: 192.168.42.123
 mysql_database: agama
 mysql_user: agama
 mysql_password: !vault |

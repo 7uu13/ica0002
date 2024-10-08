@@ -1,0 +1,19 @@
+---
+- name: Gather facts
+  ansible.builtin.setup:
+
+- name: Stop and Disable systemd-resolevd
+  ansible.builtin.systemd:
+    name: systemd-resolved
+    state: stopped
+    enabled: no
+
+- name: Remove /etc/resolv.conf symlink if it exists
+  ansible.builtin.file:
+    path: /etc/resolv.conf
+    state: absent
+
+- name: Configure resolv.conf
+  ansible.builtin.template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf

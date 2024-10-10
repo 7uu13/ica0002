@@ -1,0 +1,26 @@
+acl "corpnets" {
+  192.168.42.0/23;
+  127.0.0.0/8;
+};
+
+zone "{{ startup_name }}" {
+  type primary;
+  file "/var/cache/bind/db.{{ startup_name }}";
+  notify no;
+};
+
+options {
+      directory "/var/cache/bind";
+
+      forwarders {
+        {% for f in dns_forwarders %}
+        {{ f }};
+        {% endfor %}
+      };
+
+      allow-query { "corpnets"; };
+
+      dnssec-validation auto;
+
+      listen-on-v6 { any; };
+};

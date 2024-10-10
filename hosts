@@ -1,5 +1,5 @@
-7uu13-1 ansible_host=193.40.156.67 ansible_port=44822 ansible_user=ubuntu
-7uu13-2 ansible_host=193.40.156.67 ansible_port=37922 ansible_user=ubuntu
+7uu13-1 ansible_host=193.40.156.67 ansible_port=27922 ansible_user=ubuntu
+7uu13-2 ansible_host=193.40.156.67 ansible_port=28222 ansible_user=ubuntu
 
 [dns_servers]
 7uu13-2

@@ -1,0 +1,8 @@
+server {
+	listen 80 default_server;
+	server_name _;
+
+	location /prometheus {
+		proxy_pass http://7uu13-2:9090/prometheus;
+	}
+}

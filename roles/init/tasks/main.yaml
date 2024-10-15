@@ -29,3 +29,8 @@
     user: roman
     state: present
     key: https://github.com/romankuchin.keys
+
+- name: install Nginx node exporter
+  ansible.builtin.apt:
+    name: prometheus-node-exporter
+    state: present

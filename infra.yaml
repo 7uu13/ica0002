@@ -3,25 +3,28 @@
   hosts: all
   roles:
     - init
+  tags: init
 
 - name: DNS Server
   hosts: dns_servers
   gather_facts: yes
   roles:
     - bind
-  tags: d
+  tags: dns
 
 - name: Database Server
   hosts: db_servers
   gather_facts: yes
-  tags: db
   roles:
     - mysql
+  tags: db
 
-- name: Configure DNS
-  hosts: db_servers:web_servers
+- name: Configure resolv.conf on all machines
+  hosts: all
+  gather_facts: yes
   roles:
-    - dns
+    - resolver
+  tags: rslv
 
 - name: Web Server
   hosts: web_servers
@@ -30,3 +33,12 @@
     - agama
     - uwsgi
     - nginx
+  tags: web
+
+- name: Install and configure prometheus
+  hosts: prometheus
+  gather_facts: yes
+  roles:
+    - nginx
+    - prometheus
+  tags: prome

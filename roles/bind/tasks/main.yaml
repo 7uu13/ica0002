@@ -1,6 +1,6 @@
 ---
-- name: Gather facts
-  ansible.builtin.setup:
+#- name: Gather facts
+#  ansible.builtin.setup:
 
 - name: Update APT Cache
   ansible.builtin.apt:
@@ -20,7 +20,7 @@
 - name: Configure DNS Master Zone
   ansible.builtin.template:
     src: db.lockbox.sec.j2
-    dest: /var/cache/bind/db.{{ startup_name }}
+    dest: /var/cache/bind/db.{{ domain_name }}
   notify: Reload rncd
 
 - name: Ensure bind9 service is started and enabled

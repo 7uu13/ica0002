@@ -3,9 +3,9 @@ acl "corpnets" {
   127.0.0.0/8;
 };
 
-zone "{{ startup_name }}" {
+zone "{{ domain_name }}" {
   type primary;
-  file "/var/cache/bind/db.{{ startup_name }}";
+  file "/var/cache/bind/db.{{ domain_name }}";
   notify no;
 };
 

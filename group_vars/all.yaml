@@ -10,7 +10,7 @@ mysql_password: !vault |
           6361346266336661390a663132366131666230323531633363656364613062326435333335306330
           3066
 
-startup_name: lockbox.sec
+domain_name: lockbox.sec
 
 dns_forwarders:
   - "8.8.8.8"

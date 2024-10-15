@@ -5,9 +5,17 @@
     state: present
 
 - name: Copy local Nginx configuration file
-  ansible.builtin.copy:
-    src: default
+  ansible.builtin.template:
+    src: default.j2
     dest: /etc/nginx/sites-enabled/default
+  when: inventory_hostname not in groups['prometheus']
+  notify: Restart Nginx Service
+
+- name: Copy Nginx configuration file for Prometheus
+  ansible.builtin.template:
+    src: prometheus-nginx.j2
+    dest: /etc/nginx/sites-enabled/default
+  when: inventory_hostname in groups['prometheus']
   notify: Restart Nginx Service
 
 - name: Ensure Nginx service is started and enabled

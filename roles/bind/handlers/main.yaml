@@ -6,4 +6,12 @@
 
 - name: Reload rncd
   ansible.builtin.command: rndc reload
-  
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Restart Bind9 Exporter
+  ansible.builtin.systemd:
+    name: pormetheus-bind-exporter
+    state: restarted

@@ -12,19 +12,19 @@
     - bind
   tags: dns
 
-- name: Database Server
-  hosts: db_servers
-  gather_facts: yes
-  roles:
-    - mysql
-  tags: db
-
 - name: Configure resolv.conf on all machines
   hosts: all
   gather_facts: yes
   roles:
     - resolver
   tags: rslv
+
+- name: Database Server
+  hosts: db_servers
+  gather_facts: yes
+  roles:
+    - mysql
+  tags: db
 
 - name: Web Server
   hosts: web_servers
@@ -42,3 +42,11 @@
     - nginx
     - prometheus
   tags: prome
+
+- name: Install and configure Grafana
+  hosts: grafana
+  gather_facts: yes
+  roles:
+    - nginx
+    - grafana
+  tags: graf

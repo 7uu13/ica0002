@@ -8,14 +8,6 @@
   ansible.builtin.template:
     src: default.j2
     dest: /etc/nginx/sites-enabled/default
-  when: inventory_hostname not in groups['prometheus']
-  notify: Restart Nginx Service
-
-- name: Copy Nginx configuration file for Prometheus
-  ansible.builtin.template:
-    src: prometheus-nginx.j2
-    dest: /etc/nginx/sites-enabled/default
-  when: inventory_hostname in groups['prometheus']
   notify: Restart Nginx Service
 
 - name: Ensure Nginx service is started and enabled
@@ -23,3 +15,14 @@
     name: nginx
     state: started
     enabled: true
+
+- name: Install Prometheus Nginx Node Exporter
+  ansible.builtin.apt:
+    name: prometheus-nginx-exporter
+    state: present
+
+- name: Start and enable Nginx Exporter service
+  ansible.builtin.systemd:
+    name: prometheus-nginx-exporter
+    state: started
+    enabled: yes

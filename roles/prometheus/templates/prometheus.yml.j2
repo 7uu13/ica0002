@@ -19,6 +19,19 @@ scrape_configs:
   - job_name: 'linux'
     static_configs:
       - targets:
-          {% for host in groups['all'] %}
-            - '{{ host }}:9100'
-          {% endfor %}
+      {% for host in groups['all'] %}
+        - '{{ host }}:9100'
+      {% endfor %}
+
+  - job_name: 'mysql'
+    static_configs:
+      - targets:
+        - '7uu13-2:9104'
+
+  - job_name: 'nginx'
+    static_configs:
+      - targets:
+      {% for host in groups['all'] %}
+        - '{{ host }}:9113'
+      {% endfor %}
+      

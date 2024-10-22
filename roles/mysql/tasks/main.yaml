@@ -36,3 +36,28 @@
     priv: "{{ mysql_database }}.*:ALL"
     state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create a new user with name 'exporter'
+  community.mysql.mysql_user:
+    name: exporter
+    password: "{{ exporter_password }}"
+    priv: '*.*:PROCESS,REPLICATION CLIENT,SELECT'
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Configure my.cnf 
+  ansible.builtin.template:
+    src: my.cnf.j2
+    dest: /var/lib/prometheus/.my.cnf
+  no_log: true
+
+- name: Install exporter for mysql
+  ansible.builtin.apt:
+    name: prometheus-mysqld-exporter
+    state: present
+
+- name: Ensure Mysql exporter service is started and enabled
+  ansible.builtin.service:
+    name: prometheus-mysqld-exporter
+    state: started
+    enabled: true

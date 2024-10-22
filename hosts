@@ -1,10 +1,13 @@
-7uu13-1 ansible_host=193.40.156.67 ansible_port=17322 ansible_user=ubuntu
-7uu13-2 ansible_host=193.40.156.67 ansible_port=19722 ansible_user=ubuntu
+7uu13-1 ansible_host=193.40.156.67 ansible_port=37922 ansible_user=ubuntu 
+7uu13-2 ansible_host=193.40.156.67 ansible_port=27322 ansible_user=ubuntu 
 
 [dns_servers]
 7uu13-2
 
 [prometheus]
+7uu13-2
+
+[grafana]
 7uu13-2
 
 [db_servers]

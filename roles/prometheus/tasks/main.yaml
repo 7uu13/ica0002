@@ -15,3 +15,9 @@
     name: prometheus
     state: started
     enabled: true
+
+- name: Configure /etc/default for prometheus
+  ansible.builtin.template:
+    src: prometheus.j2
+    dest: /etc/default/prometheus
+  notify: Restart Prometheus

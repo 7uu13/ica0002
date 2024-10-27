@@ -8,6 +8,7 @@
     name:
       - mysql-server
       - python3-pymysql
+      - prometheus-mysqld-exporter
     state: present
 
 - name: Override Default Bind-Addr
@@ -16,11 +17,7 @@
     dest: /etc/mysql/mysql.conf.d/override.cnf
   notify: Restart MySql service
 
-- name: Ensure Mysql service is started and enabled
-  ansible.builtin.service:
-    name: mysql
-    state: started
-    enabled: true
+- meta: flush_handlers
 
 - name: Create a new database with name 'agama'
   community.mysql.mysql_db:
@@ -47,17 +44,18 @@
 
 - name: Configure my.cnf 
   ansible.builtin.template:
+    #mode: 0400
     src: my.cnf.j2
     dest: /var/lib/prometheus/.my.cnf
+    #owner: prometheus
   no_log: true
-
-- name: Install exporter for mysql
-  ansible.builtin.apt:
-    name: prometheus-mysqld-exporter
-    state: present
+  #notify:
 
 - name: Ensure Mysql exporter service is started and enabled
   ansible.builtin.service:
-    name: prometheus-mysqld-exporter
+    name: "{{ item }}"
     state: started
     enabled: true
+  loop:
+    - mysql
+    - prometheus-mysqld-exporter

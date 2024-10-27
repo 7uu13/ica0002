@@ -3,3 +3,8 @@
   ansible.builtin.systemd:
     name: nginx
     state: restarted
+
+- name: Restart Nginx exporter Service
+  ansible.builtin.systemd:
+    name: prometheus-nginx-exporter
+    state: restarted

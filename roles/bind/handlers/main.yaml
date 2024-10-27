@@ -8,7 +8,7 @@
   ansible.builtin.command: rndc reload
 
 - name: Reload systemd
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: yes
 
 - name: Restart Bind9 Exporter

@@ -1,0 +1,11 @@
+[Unit]
+Description=Agama client
+After=network-online.target
+
+[Service]
+User=agama-client
+ExecStart=/usr/local/bin/agama_client
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

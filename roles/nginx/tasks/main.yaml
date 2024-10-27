@@ -1,7 +1,9 @@
 ---
 - name: Install Nginx
   ansible.builtin.apt:
-    name: nginx
+    name: 
+      - nginx
+      - prometheus-nginx-exporter
     state: present
 
 # double check laster!!
@@ -9,21 +11,18 @@
   ansible.builtin.template:
     src: default.j2
     dest: /etc/nginx/sites-enabled/default
-  notify: Restart Nginx Service
+  notify:
+    - Restart Nginx Service
+    - Restart Nginx exporter Service
 
-- name: Ensure Nginx service is started and enabled
+- meta: flush_handlers
+
+- name: Ensure that both nginx and nginx exporter services are enabled and started
   ansible.builtin.service:
-    name: nginx
+    name: "{{ item }}"
     state: started
     enabled: true
+  loop:
+    - nginx
+    - prometheus-nginx-exporter
 
-- name: Install Prometheus Nginx Node Exporter
-  ansible.builtin.apt:
-    name: prometheus-nginx-exporter
-    state: present
-
-- name: Start and enable Nginx Exporter service
-  ansible.builtin.systemd:
-    name: prometheus-nginx-exporter
-    state: started
-    enabled: yes

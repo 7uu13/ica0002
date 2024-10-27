@@ -50,3 +50,15 @@
     - nginx
     - grafana
   tags: graf
+
+- name: Install Influxdb
+  hosts: influxdb
+  roles:  
+    - influxdb
+  tags: influx
+
+- name: Add agama-client to vm2
+  hosts: agama_client
+  roles: 
+    - agama_client
+  tags: agama-client

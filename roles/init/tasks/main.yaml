@@ -34,3 +34,18 @@
   ansible.builtin.apt:
     name: prometheus-node-exporter
     state: present
+
+- name: Configure rsyslog
+  ansible.builtin.template:
+    src: 50-telegraf.conf.j2
+    dest: /etc/rsyslog.d/50-telegraf.conf
+  notify: Restart rsyslog
+
+- name: Ensure influx and telegraf are enabled and running
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - prometheus-node-exporter
+    - rsyslog

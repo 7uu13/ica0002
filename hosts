@@ -1,5 +1,10 @@
-7uu13-1 ansible_host=193.40.156.67 ansible_port=4822 ansible_user=ubuntu 
-7uu13-2 ansible_host=193.40.156.67 ansible_port=7922 ansible_user=ubuntu 
+7uu13-1  ansible_port=11222
+7uu13-2  ansible_port=4522
+
+[all:vars]
+ansible_host=193.40.156.67
+ansible_user=ubuntu 
+ansible_python_interpreter=/usr/bin/python3.10
 
 [dns_servers]
 7uu13-2
@@ -15,3 +20,9 @@
 
 [web_servers]
 7uu13-1
+
+[influxdb]
+7uu13-2
+
+[agama_client]
+7uu13-2

@@ -1,0 +1,28 @@
+---
+# change later to install form influx repository
+- name: Install Influxdb
+  ansible.builtin.apt:
+    name:
+      - influxdb
+      - influxdb-client
+    state: present
+
+- name: Install Telegraf
+  ansible.builtin.apt:
+    name: telegraf
+    state: present
+
+- name: Configure Telegraf
+  ansible.builtin.template:
+    src: telegraf.conf.j2
+    dest: /etc/telegraf/telegraf.conf
+  notify: Restart telegraf
+
+- name: Ensure influx and telegraf are enabled and running
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - influxd
+    - telegraf

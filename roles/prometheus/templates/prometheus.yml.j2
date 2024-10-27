@@ -35,3 +35,7 @@ scrape_configs:
         - '{{ host }}:9113'
       {% endfor %}
       
+  - job_name: 'bind'
+    static_configs:
+      - targets:
+        - '7uu13-2:9119'

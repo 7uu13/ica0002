@@ -15,3 +15,7 @@
   ansible.builtin.systemd:
     name: pormetheus-bind-exporter
     state: restarted
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes

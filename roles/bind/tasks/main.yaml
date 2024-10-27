@@ -1,6 +1,6 @@
 ---
-#- name: Gather facts
-#  ansible.builtin.setup:
+- name: Gather facts
+  ansible.builtin.setup:
 
 - name: Update APT Cache
   ansible.builtin.apt:
@@ -24,8 +24,37 @@
   notify: Reload rncd
 
 - name: Ensure bind9 service is started and enabled
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: bind9
     state: started
     enabled: true
 
+- name: Download Bind9 exporter archive
+  ansible.builtin.get_url:
+    url: "https://github.com/prometheus-community/bind_exporter/releases/download/v0.7.0/bind_exporter-0.7.0.linux-amd64.tar.gz"
+    dest: /opt/bind_exporter-0.7.0.linux-amd64.tar.gz
+
+- name: Extract Bind9 exporter archive
+  ansible.builtin.unarchive:
+    src: /opt/bind_exporter-0.7.0.linux-amd64.tar.gz
+    dest: /opt
+    remote_src: yes
+    creates: /opt/bind_exporter-0.7.0.linux-amd64/bind_exporter
+
+- name: Create symbolic link to prometheus-bind-exporter
+  ansible.builtin.file:
+    src: /opt/bind_exporter-0.7.0.linux-amd64/bind_exporter
+    dest: /usr/local/bin/bind_exporter
+    state: link
+
+- name: Create systemd service definition
+  ansible.builtin.template:
+    src: bind_exporter.service.j2
+    dest: /etc/systemd/system/prometheus-bind-exporter.service
+  notify: Reload systemd
+
+- name: Ensure bind exporter service is started and enabled
+  ansible.builtin.systemd:
+    name: prometheus-bind-exporter
+    state: started
+    enabled: true

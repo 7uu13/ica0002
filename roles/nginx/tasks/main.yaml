@@ -4,6 +4,7 @@
     name: nginx
     state: present
 
+# double check laster!!
 - name: Copy local Nginx configuration file
   ansible.builtin.template:
     src: default.j2

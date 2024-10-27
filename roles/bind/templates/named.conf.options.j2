@@ -3,6 +3,10 @@ acl "corpnets" {
   127.0.0.0/8;
 };
 
+statistics-channels {                                                                                                                      
+  inet 127.0.0.1 port 8053 allow { 127.0.0.1; };                                                                                           
+}; 
+
 zone "{{ domain_name }}" {
   type primary;
   file "/var/cache/bind/db.{{ domain_name }}";

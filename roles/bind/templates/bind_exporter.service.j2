@@ -1,0 +1,10 @@
+[Unit]
+Description=Prometheus exporter for Bind
+
+[Service]
+Restart=on-failure
+User=prometheus
+ExecStart=/usr/local/bin/bind_exporter
+
+[Install]
+WantedBy=multi-user.target

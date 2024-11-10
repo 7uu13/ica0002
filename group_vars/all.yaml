@@ -19,6 +19,8 @@ exporter_password: !vault |
           3032
 
 domain_name: lockbox.sec
+backup_ip: 192.168.42.132
+backup_ssh_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEu6pFFWyuRrl4WGFPQGElYN9txwTGm2wSntcpVAaN90
 
 dns_forwarders:
   - "8.8.8.8"

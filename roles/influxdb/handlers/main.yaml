@@ -3,3 +3,12 @@
   ansible.builtin.systemd:
     name: telegraf
     state: restarted
+
+- name: Restart InfluxDB
+  ansible.builtin.systemd:
+    name: influxdb
+    state: restarted
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes

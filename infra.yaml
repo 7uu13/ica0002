@@ -24,7 +24,9 @@
   gather_facts: yes
   roles:
     - mysql
-  tags: db
+  tags:
+    - db
+    - mx
 
 - name: Web Server
   hosts: web_servers
@@ -33,7 +35,9 @@
     - agama
     - uwsgi
     - nginx
-  tags: web
+  tags:
+    - web
+    - mx
 
 - name: Install and configure prometheus
   hosts: prometheus
@@ -53,12 +57,12 @@
 
 - name: Install Influxdb
   hosts: influxdb
-  roles:  
+  roles:
     - influxdb
   tags: influx
 
 - name: Add agama-client to vm2
   hosts: agama_client
-  roles: 
+  roles:
     - agama_client
   tags: agama-client

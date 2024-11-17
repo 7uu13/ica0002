@@ -1,9 +1,8 @@
 ---
+# should install the exporter seperately
 - name: Install Nginx
   ansible.builtin.apt:
-    name: 
-      - nginx
-      - prometheus-nginx-exporter
+    name: nginx
     state: present
 
 # double check laster!!
@@ -13,9 +12,14 @@
     dest: /etc/nginx/sites-enabled/default
   notify:
     - Restart Nginx Service
-    - Restart Nginx exporter Service
 
-- meta: flush_handlers
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Install Prometheus Nginx Exporter
+  ansible.builtin.apt:
+    name: prometheus-nginx-exporter
+    state: present
 
 - name: Ensure that both nginx and nginx exporter services are enabled and started
   ansible.builtin.service:
@@ -25,4 +29,3 @@
   loop:
     - nginx
     - prometheus-nginx-exporter
-

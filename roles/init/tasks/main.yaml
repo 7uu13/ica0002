@@ -60,8 +60,20 @@
     ssh_key_file: .ssh/id_rsa
 
 - name: Configure known_hosts file
-  ansible.builtin.template: 
+  ansible.builtin.template:
     src: known_hosts.j2
     dest: /home/backup/.ssh/known_hosts
     owner: backup
     group: backup
+
+- name: Create a restore directory
+  ansible.builtin.file:
+    path: /home/backup/restore
+    state: directory
+    owner: backup
+    group: root
+
+- name: Install duplicity
+  ansible.builtin.apt:
+    name: duplicity
+    state: present

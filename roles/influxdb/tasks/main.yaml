@@ -26,3 +26,36 @@
   loop:
     - influxd
     - telegraf
+
+- name: Install Influx stats exporter
+  ansible.builtin.get_url:
+    url: https://github.com/carlpett/influxdb_stats_exporter/releases/download/v0.1.1/influx_stats_exporter_linux_386
+    dest: /usr/local/bin/influx_stats_exporter
+    mode: 0641
+
+- name: Create service file for influx stats exporter
+  ansible.builtin.template:
+    src: influx_stats_exporter.service.j2
+    dest: /etc/systemd/system/influx_stats_exporter.service
+    mode: "0644"
+  notify: Reload systemd
+
+- name: Ensure influx stats exporter is enabled and running
+  ansible.builtin.service:
+    name: influx_stats_exporter
+    state: started
+    enabled: true
+
+- name: Configure InfluxDB
+  ansible.builtin.template:
+    src: influxdb.conf.j2
+    dest: /etc/influxdb/influxdb.conf
+  notify:
+    - Restart InfluxDB
+
+- name: Create a backup directory
+  ansible.builtin.file:
+    path: /home/backup/influxdb
+    state: directory
+    owner: backup
+    group: root

@@ -39,3 +39,8 @@
     src: grafana.ini.j2
     dest: /etc/grafana/grafana.ini
   notify: Restart Grafana
+
+# - name: Import Grafana Dashboard
+#   ansible.builtin.file:
+#     src: main.json
+#     dest: /var/lib/grafana

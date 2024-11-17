@@ -1,9 +1,9 @@
-7uu13-1  ansible_port=18222
-7uu13-2  ansible_port=3922
+7uu13-1  ansible_port=13922
+7uu13-2  ansible_port=1322
 
 [all:vars]
 ansible_host=193.40.156.67
-ansible_user=ubuntu 
+ansible_user=ubuntu
 ansible_python_interpreter=/usr/bin/python3.10
 
 [dns_servers]
@@ -17,6 +17,7 @@ ansible_python_interpreter=/usr/bin/python3.10
 
 [db_servers]
 7uu13-2
+7uu13-1
 
 [web_servers]
 7uu13-1

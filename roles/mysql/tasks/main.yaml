@@ -12,18 +12,21 @@
     state: present
 
 - name: Override Default Bind-Addr
-  ansible.builtin.copy:
-    src: override.cnf
+  ansible.builtin.template:
+    src: override.cnf.j2
     dest: /etc/mysql/mysql.conf.d/override.cnf
   notify: Restart MySql service
 
+# ???? lol
 - meta: flush_handlers
 
 - name: Create a new database with name 'agama'
   community.mysql.mysql_db:
     name: "{{ mysql_database }}"
-    state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
+  notify:
+    - Reset MySQL source
+    - Reset MySQL replica
 
 - name: Create a new user with name 'agama'
   community.mysql.mysql_user:
@@ -31,18 +34,27 @@
     password: "{{ mysql_password }}"
     host: "%"
     priv: "{{ mysql_database }}.*:ALL"
-    state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
+  no_log: true
 
 - name: Create a new user with name 'exporter'
   community.mysql.mysql_user:
-    name: exporter
+    name: "{{ exporter_user }}"
     password: "{{ exporter_password }}"
-    priv: '*.*:PROCESS,REPLICATION CLIENT,SELECT'
-    state: present
+    priv: "*.*:PROCESS,REPLICATION CLIENT,SELECT"
     login_unix_socket: /var/run/mysqld/mysqld.sock
+  no_log: true
 
-- name: Configure my.cnf 
+- name: Create a new user with name 'replication'
+  community.mysql.mysql_user:
+    name: "{{ replication_user }}"
+    password: "{{ replication_password }}"
+    host: "%"
+    priv: "*.*:REPLICATION SLAVE"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  no_log: true
+
+- name: Configure my.cnf
   ansible.builtin.template:
     #mode: 0400
     src: my.cnf.j2
@@ -59,3 +71,44 @@
   loop:
     - mysql
     - prometheus-mysqld-exporter
+
+- name: Create a backup directory
+  ansible.builtin.file:
+    path: /home/backup/mysql
+    state: directory
+    owner: backup
+    group: root
+
+- name: Add user named 'backup' to mysql
+  community.mysql.mysql_user:
+    name: "{{ backup_user }}"
+    password: "{{ backup_user_password }}"
+    host: "%"
+    priv: "{{ mysql_database }}.*:SELECT,LOCK TABLES"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  no_log: true
+
+- name: Add my.cnf conf for user backup
+  ansible.builtin.template:
+    src: backup.my.cnf.j2
+    dest: /home/backup/.my.cnf
+    mode: "0600"
+    owner: backup
+
+- name: Configure cron for backups
+  ansible.builtin.cron:
+    name: sql dump for agama
+    user: backup
+    minute: "*/5"
+    job: "mysqldump agama > /home/backup/mysql/agama.sql"
+    cron_file: mysql-backup
+
+- name: Turn on Read only on the slave node
+  community.mysql.mysql_variables:
+    variable: read_only
+    value: "{{ 'OFF' if inventory_hostname == mysql_host else 'ON' }}"
+    mode: persist
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  notify:
+    - Reset MySQL source
+    - Reset MySQL replica

@@ -3,8 +3,11 @@ mysql_host: "{{ groups['db_servers'] | first }}"
 mysql_database: agama
 mysql_user: agama
 node_id: "{{ (ansible_port / 100) | int }}"
+mysql_backup_host: "{{ groups['db_servers'] | reject('eq', mysql_host) | first | default(mysql_host) }}"
 
 domain_name: lockbox.sec
+
+grafana_port: 3001
 
 backup_ip: 192.168.42.132
 backup_ssh_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEu6pFFWyuRrl4WGFPQGElYN9txwTGm2wSntcpVAaN90
@@ -14,6 +17,15 @@ dns_forwarders:
   - "8.8.4.4"
   - "1.1.1.1"
   - "9.9.9.9"
+
+grafana_admin_user: admin
+grafana_admin_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          66303933356436323830393739623165313233633464656165323334393963623439383432393936
+          3833346466346166313938633031633933313133393738640a336363613135393864383161353963
+          62376132326433396338653631386563643430323736343066613634386630336235363064636630
+          6263306534643839340a616535363933386566343237363563303135643062373235663235666537
+          6263
 
 mysql_password: !vault |
   $ANSIBLE_VAULT;1.1;AES256

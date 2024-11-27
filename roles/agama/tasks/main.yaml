@@ -1,29 +1,35 @@
 ---
-- name: Add system user for Agama
-  ansible.builtin.user:
-    name: agama
-
 - name: Add folder for Agama and assign it correct permissions
   ansible.builtin.file:
     path: /opt/agama
-    owner: agama
-    group: agama
     state: directory
 
-- name: Update APT Cache
-  ansible.builtin.apt:
-    cache_valid_time: 86400
-
-- name: Install Agame and its dependencies
-  ansible.builtin.apt:
-    name:
-      - python3-flask-sqlalchemy
-      - python3-pymysql
-    state: present
-
-- name: Install Agame.py
+- name: Install Agama
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/hudolejev/agama/master/agama.py
     dest: /opt/agama
-    owner: agama
-    group: agama
+
+- name: Install Dockerfile for Agama
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/hudolejev/agama/refs/heads/master/Dockerfile
+    dest: /opt/agama/Dockerfile
+
+- name: Build Agama Container
+  community.docker.docker_image:
+    name: agama
+    source: build
+    tag: latest
+    build:
+      path: /opt/agama
+    push: false
+
+- name: Create Agama Container
+  community.docker.docker_container:
+    name: agama
+    image: agama:latest
+    state: started
+    env:
+      AGAMA_DATABASE_URI: "mysql+pymysql://{{ mysql_user }}:{{ mysql_password }}@{{ mysql_host }}/{{ mysql_database }}"
+    published_ports: "8001:8000"
+    volumes: /opt/agama:/opt/agama
+  no_log: yes

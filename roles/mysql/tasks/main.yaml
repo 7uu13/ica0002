@@ -112,3 +112,15 @@
   notify:
     - Reset MySQL source
     - Reset MySQL replica
+
+- name: Add a weekly backup upload cron job
+  ansible.builtin.cron:
+    name: "MySQL Weekly Backup"
+    minute: "0"
+    hour: "*"
+    day: "*"
+    month: "*"
+    weekday: "0"
+    job: "duplicity --no-encryption full /home/backup/mysql/ rsync://katuul@backup.{{ domain_name }}/mysql"
+    user: "backup"
+  when: inventory_hostname == 'mysql_backup_host'

@@ -1,5 +1,5 @@
-7uu13-1  ansible_port=13922
-7uu13-2  ansible_port=1322
+7uu13-1  ansible_port=4722
+7uu13-2  ansible_port=2922
 
 [all:vars]
 ansible_host=193.40.156.67
@@ -13,7 +13,7 @@ ansible_python_interpreter=/usr/bin/python3.10
 7uu13-2
 
 [grafana]
-7uu13-2
+7uu13-1
 
 [db_servers]
 7uu13-2

@@ -1,46 +1,41 @@
 ---
-- name: Install prerequisite packages for Grafana
-  ansible.builtin.apt:
-    name: 
-      - apt-transport-https 
-      - software-properties-common
-      - wget
-    state: present
+- name: Create Grafana directory
+  ansible.builtin.file:
+    path: "/opt/grafana/provisioning/{{ item }}"
+    state: directory
+  loop:
+    - dashboards
+    - datasources
 
-- name: Import the GPG key
-  ansible.builtin.apt_key:
-    url: https://apt.grafana.com/gpg.key
-    keyring: /etc/apt/keyrings/grafana.gpg
-    state: present
-
-- name: Add Grafana Stable repository
-  ansible.builtin.apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
-    state: present
-    filename: grafana.list
-
-- name: Update APT Cache
-  ansible.builtin.apt:
-    cache_valid_time: 86400
-
-- name: Install Grafana
-  ansible.builtin.apt:
-    name: grafana
-    state: present
-
-- name: Start and enable grafana-server service
-  ansible.builtin.systemd:
-    name: grafana-server
-    state: started
-    enabled: yes
-
-- name: Configure grafana.ini
+- name: Add grafana.ini
   ansible.builtin.template:
     src: grafana.ini.j2
-    dest: /etc/grafana/grafana.ini
-  notify: Restart Grafana
+    dest: /opt/grafana/grafana.ini
+  notify: 
+    - Restart Grafana Container
+  no_log: yes
 
-# - name: Import Grafana Dashboard
-#   ansible.builtin.file:
-#     src: main.json
-#     dest: /var/lib/grafana
+- name: Add default dashboard and datasources
+  ansible.builtin.template:
+    src: "{{ item }}.yaml.j2"
+    dest: "/opt/grafana/provisioning/{{ item }}/default.yaml"
+  loop:
+    - datasources
+    - dashboards
+
+- name: Add dashboards
+  ansible.builtin.copy:
+    src: "{{ item }}.json"
+    dest: "/opt/grafana/provisioning/dashboards/{{ item }}.json"
+  loop:
+    - main
+    - backups
+    - mysql
+    - syslog
+
+- name: Create Grafana Container
+  community.docker.docker_container:
+    name: grafana
+    image: grafana/grafana
+    volumes: /opt/grafana:/etc/grafana
+    published_ports: "{{ grafana_port }}:3000"

@@ -1,0 +1,29 @@
+---
+- name: Add system user for Agama
+  ansible.builtin.user:
+    name: agama
+
+- name: Add folder for Agama and assign it correct permissions
+  ansible.builtin.file:
+    path: /opt/agama
+    owner: agama
+    group: agama
+    state: directory
+
+- name: Update APT Cache
+  ansible.builtin.apt:
+    cache_valid_time: 86400
+
+- name: Install Agame and its dependencies
+  ansible.builtin.apt:
+    name:
+      - python3-flask-sqlalchemy
+      - python3-pymysql
+    state: present
+
+- name: Install Agame.py
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/hudolejev/agama/master/agama.py
+    dest: /opt/agama
+    owner: agama
+    group: agama

@@ -25,11 +25,51 @@
 
 - name: Create Agama Container
   community.docker.docker_container:
-    name: agama
+    name: "agama-{{ item | regex_replace('.*(\\d)$', '\\1') }}"
     image: agama:latest
     state: started
     env:
       AGAMA_DATABASE_URI: "mysql+pymysql://{{ mysql_user }}:{{ mysql_password }}@{{ mysql_host }}/{{ mysql_database }}"
-    published_ports: "8001:8000"
+    published_ports: "{{ item }}:8000"
     volumes: /opt/agama:/opt/agama
+  loop: "{{ docker_ports }}"
   no_log: yes
+
+- name: Install HaProxy
+  ansible.builtin.apt:
+    name: haproxy
+    state: present
+
+- name: Configure HaProxy
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  notify: Restart haproxy
+
+- name: Install Keepalived
+  ansible.builtin.apt:
+    name: keepalived
+    state: present
+
+- name: Configure Keepalived
+  ansible.builtin.template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  notify: Restart keepalived
+
+- name: Ensure that HaProxy and Keepalived are enabled and running
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - haproxy
+    - keepalived
+
+- name: Install haproxy node exporter
+  ansible.builtin.apt:
+    name: prometheus-haproxy-exporter
+    state: present
+
+#- name: Install keepalived node exporter
+

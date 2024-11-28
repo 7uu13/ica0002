@@ -12,9 +12,8 @@
 
 # - name: Refresh group membership for the user
 #   ansible.builtin.command:
-#     cmd: "newgrp mygroup"
-#     become: true
-#     become_user: myuser
+#     cmd: "newgrp docker"
+#     become_user: ubuntu
 
 - name: Ensure Docker service is started
   ansible.builtin.systemd:

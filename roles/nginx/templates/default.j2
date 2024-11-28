@@ -4,7 +4,9 @@ server {
 
 	{% if 'web_servers' in group_names %}
 	location / {
-		proxy_pass http://localhost:8001;
+		proxy_pass http://{{ "192.168.{}.{}".format(
+            '100' if hostvars['7uu13-1']['ansible_default_ipv4']['address'].split('.')[2] == '42' else '101',
+            hostvars['7uu13-1']['ansible_default_ipv4']['address'].split('.')[3]) }}:88;
 	}
 	{% endif %}
 

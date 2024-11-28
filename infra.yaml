@@ -1,43 +1,43 @@
 ---
-# - name: Init
-#   hosts: all
-#   roles:
-#     - init
-#   tags: init
+- name: Init
+  hosts: all
+  roles:
+    - init
+  tags: init
 
-# - name: DNS Server
-#   hosts: dns_servers
-#   gather_facts: yes
-#   roles:
-#     - bind
-#   tags: dns
+- name: DNS Server
+  hosts: dns_servers
+  gather_facts: yes
+  roles:
+    - bind
+  tags: dns
 
-# - name: Configure resolv.conf on all machines
-#   hosts: all
-#   gather_facts: yes
-#   roles:
-#     - resolver
-#   tags: rslv
+- name: Configure resolv.conf on all machines
+  hosts: all
+  gather_facts: yes
+  roles:
+    - resolver
+  tags: rslv
 
-# - name: Database Server
-#   hosts: db_servers
-#   gather_facts: yes
-#   roles:
-#     - mysql
-#   tags:
-#     - db
-#     - mx
+- name: Database Server
+  hosts: db_servers
+  gather_facts: yes
+  roles:
+    - mysql
+  tags:
+    - db
+    - mx
 
-# - name: Web Server
-#   hosts: web_servers
-#   gather_facts: yes
-#   roles:
-#     - nginx
-#     - docker
-#     - agama
-#   tags:
-#     - web
-#     - mx
+- name: Web Server
+  hosts: web_servers
+  gather_facts: yes
+  roles:
+    - nginx
+    - docker
+    - agama
+  tags:
+    - web
+    - mx
 
 - name: Install and configure prometheus
   hosts: prometheus

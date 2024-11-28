@@ -1,0 +1,17 @@
+listen stats
+    bind *:9188
+    stats enable
+    stats uri /metrics
+    stats auth 
+    stats refresh 10s
+
+frontend my_ha_frontend
+    bind :88
+    default_backend my_ha_backend
+
+backend my_ha_backend
+{% for node in groups['web_servers'] %}
+  {% for port in docker_ports %}
+    server {{ node }}-agama-{{ port | regex_replace('.*(\\d)$', '\\1') }} {{ node }}:{{ port }} check
+  {% endfor %}
+{% endfor %}

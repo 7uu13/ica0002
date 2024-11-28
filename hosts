@@ -1,5 +1,5 @@
-7uu13-1  ansible_port=4722
-7uu13-2  ansible_port=2922
+7uu13-1  ansible_port=31722
+7uu13-2  ansible_port=40822
 
 [all:vars]
 ansible_host=193.40.156.67
@@ -21,6 +21,7 @@ ansible_python_interpreter=/usr/bin/python3.10
 
 [web_servers]
 7uu13-1
+7uu13-2
 
 [influxdb]
 7uu13-2

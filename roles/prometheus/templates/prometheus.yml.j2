@@ -45,3 +45,8 @@ scrape_configs:
     static_configs:
       - targets:
         - 'localhost:9424'
+
+  - job_name: 'haproxy'
+    static_configs:
+      - targets:
+        - 'localhost:9188'

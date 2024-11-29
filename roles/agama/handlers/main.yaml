@@ -8,3 +8,14 @@
   ansible.builtin.systemd:
     name: haproxy
     state: restarted
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Restart keepalived-exporter
+  ansible.builtin.systemd:
+    name: keepalived-exporter
+    state: restarted
+    enabled: yes
+

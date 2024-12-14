@@ -1,0 +1,37 @@
+---
+- name: Install Keepalived
+  ansible.builtin.apt:
+    name: keepalived
+    state: present
+
+- name: Configure Keepalived
+  ansible.builtin.template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  notify: Restart keepalived
+
+- name: Install keepalived node exporter
+  ansible.builtin.get_url:
+    url: "http://backup/keepalived-exporter_1.4.0_linux_amd64.deb"
+    dest: "/tmp/package.deb"
+
+- name: Install the downloaded keepalived exporter .deb file
+  ansible.builtin.command: dpkg -i /tmp/package.deb
+
+- name: Create service file for keepalived exporter
+  ansible.builtin.template:
+    src: keepalived-exporter.service.j2
+    dest: /etc/systemd/system/keepalived-exporter.service
+  notify:
+    - Reload systemd
+    - Restart keepalived
+    - Restart keepalived-exporter
+
+- name: Ensure that Keepalived and its exporter are enabled and running
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop: 
+    - keepalived
+    - keepalived-exporter

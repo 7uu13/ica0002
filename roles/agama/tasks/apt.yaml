@@ -14,7 +14,7 @@
   ansible.builtin.apt:
     cache_valid_time: 86400
 
-- name: Install Agame and its dependencies
+- name: Install Agama and its dependencies
   ansible.builtin.apt:
     name:
       - python3-flask-sqlalchemy

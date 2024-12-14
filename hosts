@@ -1,5 +1,5 @@
-7uu13-1  ansible_port=31722
-7uu13-2  ansible_port=40822
+7uu13-1  ansible_port=30622
+7uu13-2  ansible_port=29622
 
 [all:vars]
 ansible_host=193.40.156.67
@@ -8,6 +8,13 @@ ansible_python_interpreter=/usr/bin/python3.10
 
 [dns_servers]
 7uu13-2
+7uu13-1 
+
+[dns_primary]
+7uu13-2
+
+[dns_secondary]
+7uu13-1
 
 [prometheus]
 7uu13-2

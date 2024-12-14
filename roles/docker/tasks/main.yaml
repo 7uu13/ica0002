@@ -10,13 +10,8 @@
     groups: docker
     append: yes
 
-# - name: Refresh group membership for the user
-#   ansible.builtin.command:
-#     cmd: "newgrp docker"
-#     become_user: ubuntu
-
 - name: Ensure Docker service is started
   ansible.builtin.systemd:
     name: docker
     state: started
-    enabled: true
+    enabled: yes

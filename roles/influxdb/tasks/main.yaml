@@ -1,15 +1,11 @@
 ---
 # change later to install form influx repository
-- name: Install Influxdb
+- name: Install Influxdb and Telegraf
   ansible.builtin.apt:
     name:
       - influxdb
       - influxdb-client
-    state: present
-
-- name: Install Telegraf
-  ansible.builtin.apt:
-    name: telegraf
+      - telegraf
     state: present
 
 - name: Configure Telegraf
@@ -18,7 +14,7 @@
     dest: /etc/telegraf/telegraf.conf
   notify: Restart telegraf
 
-- name: Ensure influx and telegraf are enabled and running
+- name: Ensure that influx and telegraf are enabled and running
   ansible.builtin.service:
     name: "{{ item }}"
     state: started
@@ -38,7 +34,9 @@
     src: influx_stats_exporter.service.j2
     dest: /etc/systemd/system/influx_stats_exporter.service
     mode: "0644"
-  notify: Reload systemd
+  notify: 
+    - Reload systemd
+    - Restart influx_stats_exporter
 
 - name: Ensure influx stats exporter is enabled and running
   ansible.builtin.service:
@@ -58,4 +56,3 @@
     path: /home/backup/influxdb
     state: directory
     owner: backup
-    group: root

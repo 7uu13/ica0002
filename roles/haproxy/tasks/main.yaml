@@ -9,3 +9,25 @@
     src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
   notify: Restart haproxy
+
+- name: Install haproxy node exporter
+  ansible.builtin.apt:
+    name: prometheus-haproxy-exporter
+    state: present
+
+- name: Configure haproxy node exporter
+  ansible.builtin.template:
+    src: haproxy-exporter.args.j2
+    dest: /etc/default/prometheus-haproxy-exporter
+  notify:
+    - Restart haproxy
+    - Restart haproxy exporter
+
+- name: Ensure that haproxy and its exporter are running and enabled  
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - haproxy
+    - prometheus-haproxy-exporter

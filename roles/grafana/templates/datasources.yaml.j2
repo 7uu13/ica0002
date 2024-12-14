@@ -1,0 +1,22 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    url: http://7uu13-2:9090/prometheus
+    access: proxy
+    isDefault: true
+
+  - name: InfluxDB
+    type: influxdb
+    url: http://7uu13-2:8086
+    access: proxy
+    database: example
+    isDefault: false
+
+  - name: Telegraf
+    type: influxdb
+    url: http://7uu13-2:8086
+    access: proxy
+    database: telegraf
+    isDefault: false

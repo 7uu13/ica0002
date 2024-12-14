@@ -9,6 +9,11 @@
     name: influxdb
     state: restarted
 
+- name: Restart influx_stats_exporter
+  ansible.builtin.systemd:
+    name: influx_stats_exporter
+    state: restarted
+
 - name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: yes

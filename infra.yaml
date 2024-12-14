@@ -35,6 +35,8 @@
     - nginx
     - docker
     - agama
+    - haproxy
+    - keepalived
   tags:
     - web
     - mx
@@ -51,7 +53,7 @@
   hosts: grafana
   gather_facts: yes
   roles: 
-    - nginx
+    #- nginx
     - grafana
   tags: graf
 
@@ -61,7 +63,7 @@
     - influxdb
   tags: influx
 
-- name: Add agama-client to vm2
+- name: Install agama-client to vm2
   hosts: agama_client
   roles:
     - agama_client

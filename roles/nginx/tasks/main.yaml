@@ -1,5 +1,4 @@
 ---
-# should install the exporter seperately
 - name: Install Nginx
   ansible.builtin.apt:
     name: nginx
@@ -13,7 +12,7 @@
   notify:
     - Restart Nginx Service
 
-- name: Flush handlers
+- name: Flush nginx handlers
   ansible.builtin.meta: flush_handlers
 
 - name: Install Prometheus Nginx Exporter

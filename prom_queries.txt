@@ -1,0 +1,2 @@
+node_memory_MemAvailable_bytes{instance=~"Jns234-.*"}
+sum by (instance)( rate(node_cpu_seconds_total{instance=~"Jns234-.*"}[30s]) * 100)

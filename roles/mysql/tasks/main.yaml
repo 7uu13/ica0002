@@ -1,8 +1,4 @@
 ---
-- name: Update APT Cache
-  ansible.builtin.apt:
-    cache_valid_time: 86400
-
 - name: Install MySql
   ansible.builtin.apt:
     name:
@@ -17,8 +13,8 @@
     dest: /etc/mysql/mysql.conf.d/override.cnf
   notify: Restart MySql service
 
-# ???? lol
-- meta: flush_handlers
+- name: Flush mysql handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: Create a new database with name 'agama'
   community.mysql.mysql_db:
@@ -35,7 +31,7 @@
     host: "%"
     priv: "{{ mysql_database }}.*:ALL"
     login_unix_socket: /var/run/mysqld/mysqld.sock
-  no_log: true
+  no_log: yes
 
 - name: Create a new user with name 'exporter'
   community.mysql.mysql_user:
@@ -43,7 +39,7 @@
     password: "{{ exporter_password }}"
     priv: "*.*:PROCESS,REPLICATION CLIENT,SELECT"
     login_unix_socket: /var/run/mysqld/mysqld.sock
-  no_log: true
+  no_log: yes
 
 - name: Create a new user with name 'replication'
   community.mysql.mysql_user:
@@ -52,18 +48,16 @@
     host: "%"
     priv: "*.*:REPLICATION SLAVE"
     login_unix_socket: /var/run/mysqld/mysqld.sock
-  no_log: true
+  no_log: yes
 
 - name: Configure my.cnf
   ansible.builtin.template:
-    #mode: 0400
     src: my.cnf.j2
     dest: /var/lib/prometheus/.my.cnf
-    #owner: prometheus
-  no_log: true
-  #notify:
+  no_log: yes
+  notify: Restart MySql service
 
-- name: Ensure Mysql exporter service is started and enabled
+- name: Ensure that Mysql and it's exporter service are started and enabled
   ansible.builtin.service:
     name: "{{ item }}"
     state: started
@@ -77,7 +71,6 @@
     path: /home/backup/mysql
     state: directory
     owner: backup
-    group: root
 
 - name: Add user named 'backup' to mysql
   community.mysql.mysql_user:
@@ -86,7 +79,7 @@
     host: "%"
     priv: "{{ mysql_database }}.*:SELECT,LOCK TABLES"
     login_unix_socket: /var/run/mysqld/mysqld.sock
-  no_log: true
+  no_log: yes
 
 - name: Add my.cnf conf for user backup
   ansible.builtin.template:
@@ -94,6 +87,8 @@
     dest: /home/backup/.my.cnf
     mode: "0600"
     owner: backup
+  notify: Restart MySql service
+  no_log: yes
 
 - name: Configure cron for backups
   ansible.builtin.cron:

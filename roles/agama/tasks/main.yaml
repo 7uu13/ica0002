@@ -4,15 +4,13 @@
     path: /opt/agama
     state: directory
 
-- name: Install Agama
+- name: Install Agama source and it's Dockerfile
   ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/hudolejev/agama/master/agama.py
+    url: "{{ item }}"
     dest: /opt/agama
-
-- name: Install Dockerfile for Agama
-  ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/hudolejev/agama/refs/heads/master/Dockerfile
-    dest: /opt/agama/Dockerfile
+  loop:
+    - https://raw.githubusercontent.com/hudolejev/agama/master/agama.py
+    - https://raw.githubusercontent.com/hudolejev/agama/refs/heads/master/Dockerfile
 
 - name: Build Agama Container
   community.docker.docker_image:
@@ -34,45 +32,3 @@
     volumes: /opt/agama:/opt/agama
   loop: "{{ docker_ports }}"
   no_log: yes
-
-- name: Install Keepalived
-  ansible.builtin.apt:
-    name: keepalived
-    state: present
-
-- name: Configure Keepalived
-  ansible.builtin.template:
-    src: keepalived.conf.j2
-    dest: /etc/keepalived/keepalived.conf
-  notify: Restart keepalived
-
-- name: Ensure that HaProxy and Keepalived are enabled and running
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    state: started
-    enabled: true
-  loop:
-    - haproxy
-    - keepalived
-
-- name: Install haproxy node exporter
-  ansible.builtin.apt:
-    name: prometheus-haproxy-exporter
-    state: present
-
-- name: Install keepalived node exporter
-  ansible.builtin.get_url:
-    url: "http://backup/keepalived-exporter_1.4.0_linux_amd64.deb"
-    dest: "/tmp/package.deb"
-
-- name: Install the downloaded .deb file
-  ansible.builtin.command: dpkg -i /tmp/package.deb
-
-- name: Create service file for keepalived exporter
-  ansible.builtin.template:
-    src: keepalived-exporter.service.j2
-    dest: /etc/systemd/system/keepalived-exporter.service
-  notify:
-    - Reload systemd
-    - Restart keepalived
-    - Restart keepalived-exporter

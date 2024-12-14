@@ -8,61 +8,59 @@ We back up services that satisfy at least one of these criteria:
  - are not feasible (or very costly) to restore by other means
 
 Services that are backed up:
- - _____
- - _____
- - _____
+ - Database Servers
+ - InfluxDB
+ - Ansible Repository
 
 
 ## Schedule
 
-_____ backups are created every _____; it takes up to _____ to create and store the backup.
+Mysql backups are created every 6 hours and it takes up to 10 minutes (depending on the size of the database) to create and store the backup.
 
-_____ backups are created every _____; it takes up to _____ to create and store the backup.
+InfluxDB backups are created every 12 hours and it takes up to 15 minutes to create and store the backup.
 
-_____ backups are created every _____; it takes up to _____ to create and store the backup.
+Ansible Repository backups are created every 24 hours and it takes up to 5 minutes to create and store the backup.
 
-All backups are started automatically by _____.
+All backups are started automatically by cron.
 
 Backup RPO (recovery point objective) is:
- - _____ for _____
- - _____ for _____
- - _____ for _____
+ - 6 hours for Mysql
+ - 12 hours for InfluxDB
+ - 24 hours for Ansible Repository
 
 
 ## Storage
 
-_____ and _____ backups are uploaded to the backup server.
+Both Mysql and InfluxDB backups are uploaded to the backup server.
 
-_____ is mirrored to the internal Git server.
+Ansible Repository is mirrored to the internal Git server.
 
 Backup data from both servers will be synchronized to encrypted AWS S3 bucket in future (work in progress).
 
 
 ## Retention
 
-_____ backups are stored for _____; _____ versions (recovery points) are available to restore.
+MySQL backups are stored for 7 days; 28 versions (recovery points) are available to restore.
 
-_____ backups are stored for _____; _____ versions are available to restore.
+InfluxDB backups are stored for 14 days; 28 versions are available to restore.
 
-_____ backups are stored for _____; _____ versions are available to restore.
-
+Ansible repository backups are stored for 30 days; 30 versions are available to restore.
 
 ## Usability checks
 
-_____ backups are verified every _____ by _____.
+MySQL backups are verified every 24 hours by automated restore testing script.
 
-_____ backups are verified every _____ by _____.
+InfluxDB backups are verified every 48 hours by automated restore testing script.
 
-_____ backups are verified every _____ by _____.
-
+Ansible repository backups are verified every 24 hours by automated clone testing.
 
 ## Restore process
 
 Service is recovered from the backup in case of an incident, and when service cannot be restored in any other way.
 
 RTO (recovery time objective) is:
- - _____ for _____
- - _____ for _____
- - _____ for _____
+ - 30 minutes for MySQL 
+ - 45 minutes for InfluxDB
+ - 15 minutes for Ansible repository
 
 Detailed backup restore procedure is documented in the [backup_restore.md](./backup_restore.md).

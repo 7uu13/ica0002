@@ -1,0 +1,16 @@
+$TTL	604800
+168.192.in-addr.arpa. 	IN	SOA	7uu13-2.{{ domain_name }}. tuule.{{ domain_name }}. (
+			      2		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+
+{% for node in groups['dns_servers'] %}
+168.192.in-addr.arpa.	IN	NS	{{ node }}.{{ domain_name }}.
+{% endfor %}
+
+{% for vm in hostvars %}
+{{ hostvars[vm]['ansible_default_ipv4']['address'].split('.')[3] }}.{{ hostvars[vm]['ansible_default_ipv4']['address'].split('.')[2] }} IN PTR {{ vm }}.{{ domain_name }}.
+{% endfor %}

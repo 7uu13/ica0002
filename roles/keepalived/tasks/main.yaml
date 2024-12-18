@@ -9,6 +9,7 @@
     src: keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
   notify: Restart keepalived
+  no_log: yes
 
 - name: Install keepalived node exporter
   ansible.builtin.get_url:
@@ -33,6 +34,6 @@
     name: "{{ item }}"
     state: started
     enabled: yes
-  loop: 
+  loop:
     - keepalived
     - keepalived-exporter

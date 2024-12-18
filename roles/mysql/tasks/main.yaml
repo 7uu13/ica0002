@@ -78,7 +78,6 @@
   community.mysql.mysql_user:
     name: "{{ backup_user }}"
     password: "{{ backup_user_password }}"
-    host: "%"
     priv: "{{ mysql_database }}.*:SELECT,LOCK TABLES"
     login_unix_socket: /var/run/mysqld/mysqld.sock
   no_log: yes
@@ -89,7 +88,6 @@
     dest: /home/backup/.my.cnf
     mode: "0600"
     owner: backup
-  notify: Restart MySql service
   no_log: yes
 
 - name: Turn on Read only on the slave node

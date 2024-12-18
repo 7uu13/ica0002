@@ -1,3 +1,8 @@
+global_defs {                                                                         
+    enable_script_security                                                            
+    script_user keepalived_script                                                     
+}  
+
 vrrp_script check_haproxy {
     script "/usr/bin/killall -0 haproxy"
     weight 20
@@ -26,8 +31,12 @@ vrrp_instance VI_1 {
             hostvars['7uu13-1']['ansible_default_ipv4']['address'].split('.')[3]) }}/24
     }
     unicast_peer {
-        {{ hostvars['7uu13-1']['ansible_default_ipv4']['address'] }}
+    {% if inventory_hostname == '7uu13-1' %}
         {{ hostvars['7uu13-2']['ansible_default_ipv4']['address'] }}
+    {% else %}
+        {{ hostvars['7uu13-1']['ansible_default_ipv4']['address'] }}
+    {% endif %}
+
     }
     track_script {
         check_haproxy

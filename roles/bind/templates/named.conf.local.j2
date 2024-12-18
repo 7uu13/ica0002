@@ -1,0 +1,51 @@
+zone "{{ domain_name }}" {
+    {% if inventory_hostname in groups['dns_primary'] %}
+    type primary;
+    allow-transfer { 
+      {% for node in hostvars %}
+      {{ hostvars[node]['ansible_default_ipv4']['address'] }};
+      {% endfor %}
+      key "transfer-key"; 
+    };
+    allow-update {
+      {% for node in hostvars %}
+      {{ hostvars[node]['ansible_default_ipv4']['address'] }};
+      {% endfor %}
+      127.0.0.1;
+      key "update-key";
+    };
+    {% else %}
+    type secondary;
+    masters {
+      {{ hostvars[groups['dns_primary'][0]]['ansible_default_ipv4']['address'] }};
+    };
+    {% endif %}
+    file "/var/cache/bind/db.{{ domain_name }}";
+    allow-query {any;};
+  };
+  
+  zone "{{ rev_domain }}" {
+    {% if inventory_hostname in groups['dns_primary'] %}
+    type primary;
+    notify no;
+    allow-transfer { 
+      {% for node in hostvars %}
+      {{ hostvars[node]['ansible_default_ipv4']['address'] }};
+      {% endfor %}
+      key "transfer-key"; 
+    };
+    allow-update {
+      {% for node in hostvars %}
+      {{ hostvars[node]['ansible_default_ipv4']['address'] }};
+      {% endfor %}
+      127.0.0.1;
+      key "update-key";
+    };
+    {% else %}
+    type secondary;
+    masters {
+      {{ hostvars[groups['dns_primary'][0]]['ansible_default_ipv4']['address'] }};
+    };
+    {% endif %}
+    file "/var/cache/bind/db.{{ domain_name }}.rev";
+  };

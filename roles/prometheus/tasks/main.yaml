@@ -21,3 +21,9 @@
     src: prometheus.j2
     dest: /etc/default/prometheus
   notify: Restart Prometheus
+
+- name: Add Prometheus CNAME record
+  ansible.builtin.include_role:                                                       
+    name: dns_record                                                                  
+  vars:                                                                               
+    dns_record: "prometheus" 

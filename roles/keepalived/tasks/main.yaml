@@ -13,10 +13,12 @@
 - name: Install keepalived node exporter
   ansible.builtin.get_url:
     url: "http://backup/keepalived-exporter_1.4.0_linux_amd64.deb"
-    dest: "/tmp/package.deb"
+    dest: "/var/tmp/package.deb"
 
 - name: Install the downloaded keepalived exporter .deb file
-  ansible.builtin.command: dpkg -i /tmp/package.deb
+  ansible.builtin.apt:
+    deb: /var/tmp/package.deb
+    state: present
 
 - name: Create service file for keepalived exporter
   ansible.builtin.template:
@@ -24,7 +26,6 @@
     dest: /etc/systemd/system/keepalived-exporter.service
   notify:
     - Reload systemd
-    - Restart keepalived
     - Restart keepalived-exporter
 
 - name: Ensure that Keepalived and its exporter are enabled and running

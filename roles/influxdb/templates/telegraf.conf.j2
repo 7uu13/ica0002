@@ -9,9 +9,12 @@
   flush_jitter = "0s"
   precision = ""
   omit_hostname = false
-
-[[outputs.influxdb]]
-  urls = ["http://7uu13-2:8086"]  
-  database = "telegraf"            
+[[inputs.diskio]]                                  
+[[inputs.kernel]]                                  
+[[inputs.mem]]                                     
+[[inputs.processes]]                               
+[[inputs.swap]]                                    
+[[inputs.system]]                                  
 [[inputs.syslog]]
-  server = "udp://:6514"
+server = "udp://:6514"
+[[outputs.influxdb]]

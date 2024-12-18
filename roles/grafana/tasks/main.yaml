@@ -37,20 +37,16 @@
 
 - name: Create Grafana Container
   community.docker.docker_container:
+    container_default_behavior: no_defaults  
     name: grafana
     image: grafana/grafana
+    user: root
     volumes: /opt/grafana:/etc/grafana
     published_ports: "{{ grafana_port }}:3000"
+    restart_policy: always 
   
-- name: Add CNAME Record for grafana
-  community.general.nsupdate:
-    key_name: "update-key"
-    key_secret: "{{ dns_update_key }}"
-    key_algorithm: "hmac-sha256"
-    type: "CNAME"
-    server: "192.168.43.40" #"{{ hostvars['7uu13-2']['ansible_default_ipv4']['address'] }}" 
-    zone: "{{ domain_name }}."
-    record: "grafana"
-    value: "{{ groups['dns_secondary'][0] }}" 
-  #when: inventory_hostname == groups['dns_primary'][0]
-  no_log: no
+- name: Add Grafana CNAME record                                                                  
+  ansible.builtin.include_role:                                                       
+    name: dns_record                                                                  
+  vars:                                                                               
+    dns_record: "grafana" 

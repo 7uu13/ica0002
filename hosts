@@ -1,37 +1,39 @@
-7uu13-1  ansible_port=30622
-7uu13-2  ansible_port=29622
+7uu13-1  ansible_port=31322
+7uu13-2  ansible_port=35622
+7uu13-3  ansible_port=40222
 
 [all:vars]
 ansible_host=193.40.156.67
 ansible_user=ubuntu
 ansible_python_interpreter=/usr/bin/python3.10
 
-[dns_servers]
-7uu13-2
-7uu13-1 
-
-[dns_primary]
-7uu13-2
-
-[dns_secondary]
-7uu13-1
-
-[prometheus]
-7uu13-2
-
-[grafana]
-7uu13-1
-
-[db_servers]
-7uu13-2
-7uu13-1
-
 [web_servers]
 7uu13-1
 7uu13-2
 
-[influxdb]
+[db_servers]
+7uu13-1
 7uu13-2
 
-[agama_client]
+[dns_primary]
+7uu13-3
+
+[dns_secondary]
+7uu13-1
 7uu13-2
+
+[dns_servers:children]
+dns_primary
+dns_secondary
+
+[prometheus]
+7uu13-3
+
+[grafana]
+7uu13-3
+
+[influxdb]
+7uu13-3
+
+[agama_client]
+7uu13-3

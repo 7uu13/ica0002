@@ -13,7 +13,7 @@
 
 - name: Restart Bind9 Exporter
   ansible.builtin.systemd:
-    name: pormetheus-bind-exporter
+    name: prometheus-bind-exporter
     state: restarted
 
 - name: Reload systemd

@@ -1,2 +1,2 @@
-node_memory_MemAvailable_bytes{instance=~"Jns234-.*"}
-sum by (instance)( rate(node_cpu_seconds_total{instance=~"Jns234-.*"}[30s]) * 100)
+node_memory_MemAvailable_bytes{instance=~"7uu13-.*"}
+sum by (instance)( rate(node_cpu_seconds_total{instance=~"7uu13-.*"}[30s]) * 100)

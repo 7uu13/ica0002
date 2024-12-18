@@ -1,5 +1,5 @@
 $TTL	604800
-{{ domain_name }}. 	IN	SOA	7uu13-2.{{ domain_name }}. tuule.{{ domain_name }}. (
+{{ domain_name }}. 	IN	SOA	{{ hostvars[groups['dns_primary'][0]]['ansible_hostname'] }}.{{ domain_name }}. tuule.{{ domain_name }}. (
 			      2		; Serial
 			 604800		; Refresh
 			  86400		; Retry
@@ -7,10 +7,12 @@ $TTL	604800
 			 604800 )	; Negative Cache TTL
 ;
 
-{% for node in groups['dns_servers'] %}
-{{ domain_name }}.	IN	NS	{{ node }}.{{ domain_name }}.
+{% for vm in groups['dns_servers'] %}
+{{ domain_name }}.	IN	NS	{{ vm }}
 {% endfor %}
 
+; A Records
+
 {% for vm in groups['dns_servers'] %}
-{{ vm }} IN A {{ hostvars[vm]['ansible_default_ipv4']['address'] }}
+{{ vm }}	IN	A	{{ hostvars[vm]['ansible_default_ipv4']['address'] }}
 {% endfor %}

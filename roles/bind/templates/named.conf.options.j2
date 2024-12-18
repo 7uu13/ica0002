@@ -8,61 +8,6 @@ statistics-channels {
   inet 127.0.0.1 port 8053 allow { 127.0.0.1; };                                                                                           
 }; 
 
-key "transfer-key" {
-  algorithm hmac-sha256;
-  secret "{{ dns_transfer_key }}";
-};
-
-key "update-key" {
-  algorithm hmac-sha256;
-  secret "{{ dns_update_key }}";
-};
-
-zone "{{ domain_name }}" {
-  {% if inventory_hostname in groups['dns_primary'] %}
-  type primary;
-  notify no;
-  allow-transfer { 
-    {{ hostvars['7uu13-1']['ansible_default_ipv4']['address'] }};
-    key "transfer-key"; 
-  };
-  allow-update {
-    {{ hostvars['7uu13-1']['ansible_default_ipv4']['address'] }};
-    127.0.0.1;
-    key "update-key";
-  };
-  {% else %}
-  type secondary;
-  masters {
-    {{ hostvars['7uu13-2']['ansible_default_ipv4']['address'] }};
-  };
-  {% endif %}
-  file "/var/cache/bind/db.{{ domain_name }}";
-  allow-query {any;};
-};
-
-zone "168.192.in-addr.arpa" {
-  {% if inventory_hostname in groups['dns_primary'] %}
-  type primary;
-  notify no;
-  allow-transfer { 
-    {{ hostvars['7uu13-1']['ansible_default_ipv4']['address'] }};
-    key "transfer-key"; 
-  };
-  allow-update {
-    {{ hostvars['7uu13-1']['ansible_default_ipv4']['address'] }};
-    127.0.0.1;
-    key "update-key";
-  };
-  {% else %}
-  type secondary;
-  masters {
-    {{ hostvars['7uu13-2']['ansible_default_ipv4']['address'] }};
-  };
-  {% endif %}
-  file "/var/cache/bind/db.{{ domain_name }}.rev";
-};
-
 options {
       directory "/var/cache/bind";
 
@@ -72,6 +17,14 @@ options {
         {% endfor %}
       };
       allow-query { "corpnets"; };
-      dnssec-validation auto;
-      listen-on-v6 { any; };
+};
+
+key "transfer-key" {
+  algorithm hmac-sha256;
+  secret "{{ dns_transfer_key }}";
+};
+
+key "update-key" {
+  algorithm hmac-sha256;
+  secret "{{ dns_update_key }}";
 };

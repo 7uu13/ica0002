@@ -26,28 +26,44 @@ scrape_configs:
   - job_name: 'mysql'
     static_configs:
       - targets:
-        - '7uu13-2:9104'
-        - '7uu13-1:9104'
+      {% for host in ['mysql-1', 'mysql-2'] %}
+        - '{{ host }}:9104'
+      {% endfor %}
 
   - job_name: 'nginx'
     static_configs:
       - targets:
-      {% for host in groups['all'] %}
+      {% for host in ['www-1', 'www-2', 'prometheus'] %}
         - '{{ host }}:9113'
       {% endfor %}
       
   - job_name: 'bind'
     static_configs:
       - targets:
-        - '7uu13-1:9119'
-        - '7uu13-2:9119'
+      {% for host in ['ns-1', 'ns-2', 'ns-3'] %}
+        - '{{ host }}:9119'
+      {% endfor %}
     
   - job_name: 'influxdb'
     static_configs:
       - targets:
-        - 'localhost:9424'
+        - 'influxdb:9424'
 
   - job_name: 'haproxy'
     static_configs:
       - targets:
-        - 'localhost:9101'
+      {% for host in ['lb-1', 'lb-2'] %}
+        - '{{ host }}:9101'
+      {% endfor %}
+
+  - job_name: 'keepalived'
+    static_configs:
+      - targets:
+      {% for host in ['lb-1', 'lb-2'] %}
+        - '{{ host }}:9165'
+      {% endfor %}
+
+  - job_name: 'backup'
+    static_configs:
+      - targets:
+        - 'backup:9111'

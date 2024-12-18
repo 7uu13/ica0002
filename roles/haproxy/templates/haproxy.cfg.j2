@@ -42,7 +42,7 @@ frontend my_ha_frontend
     default_backend my_ha_backend
 
 backend my_ha_backend
-{% for node in groups['web_servers'] %}
+{% for node in ['www-1', 'www-2'] %}
   {% for port in docker_ports %}
     server {{ node }}-agama-{{ port | regex_replace('.*(\\d)$', '\\1') }} {{ node }}:{{ port }} check
   {% endfor %}

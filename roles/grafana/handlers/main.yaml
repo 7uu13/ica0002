@@ -3,5 +3,4 @@
   community.docker.docker_container:
     name: grafana
     image: grafana/grafana
-    #state: started
     restart: yes

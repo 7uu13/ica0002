@@ -15,18 +15,18 @@ Services that are backed up:
 
 ## Schedule
 
-Mysql backups are created every 6 hours and it takes up to 10 minutes (depending on the size of the database) to create and store the backup.
+Mysql backups are created every 6 hours and it takes up to 30 minutes (depending on the size of the database) to create and store the backup.
 
 InfluxDB backups are created every 12 hours and it takes up to 15 minutes to create and store the backup.
 
-Ansible Repository backups are created every 24 hours and it takes up to 5 minutes to create and store the backup.
+Ansible Repository backups are created every 30 minutes and it takes up to 5 minutes to create and store the backup.
 
 All backups are started automatically by cron.
 
 Backup RPO (recovery point objective) is:
  - 6 hours for Mysql
  - 12 hours for InfluxDB
- - 24 hours for Ansible Repository
+ - 30 minutes for Ansible Repository
 
 
 ## Storage
@@ -40,11 +40,11 @@ Backup data from both servers will be synchronized to encrypted AWS S3 bucket in
 
 ## Retention
 
-MySQL backups are stored for 7 days; 28 versions (recovery points) are available to restore.
+MySQL backups are stored for 7 days;
 
-InfluxDB backups are stored for 14 days; 28 versions are available to restore.
+InfluxDB backups are stored for 14 days;
 
-Ansible repository backups are stored for 30 days; 30 versions are available to restore.
+Ansible repository backups are stored for 180 days;
 
 ## Usability checks
 
@@ -60,7 +60,7 @@ Service is recovered from the backup in case of an incident, and when service ca
 
 RTO (recovery time objective) is:
  - 30 minutes for MySQL 
- - 45 minutes for InfluxDB
+ - 15 minutes for InfluxDB
  - 15 minutes for Ansible repository
 
 Detailed backup restore procedure is documented in the [backup_restore.md](./backup_restore.md).

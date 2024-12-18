@@ -6,6 +6,7 @@ node_id: "{{ (ansible_port / 100) | int }}"
 mysql_backup_host: "{{ groups['db_servers'] | reject('eq', mysql_host) | first | default(mysql_host) }}"
 
 domain_name: lockbox.sec
+rev_domain: 168.192.in-addr.arpa
 
 docker_ports: [8001, 8002]
 
@@ -32,6 +33,7 @@ dns_transfer_key: !vault |
           65343038616432303633666633303438623831336237366138326337633234373136313638643465
           6466633438393836613364656431333630656263306262666433
 
+dns_update_key_name: update-key
 dns_update_key: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           65303039626631326231346132346462323062666461386237653739363138393431333431643632

@@ -1,12 +1,20 @@
 ---
-# change later to install form influx repository
-- name: Install Influxdb and Telegraf
-  ansible.builtin.apt:
-    name:
-      - influxdb
-      - influxdb-client
-      - telegraf
-    state: present
+- name: download InfluxDB GPG keys                 
+  ansible.builtin.apt_key:                         
+    url: https://repos.influxdata.com/influxdata-archive_compat.key                                   
+    state: present                                 
+                                                   
+- name: add InfluxDB repository                    
+  ansible.builtin.apt_repository:                  
+    repo: "deb https://repos.influxdata.com/ubuntu stable main"                                       
+    state: present                                 
+    filename: influxdb                             
+                                                   
+- name: install InfluxDB and telegraf                        
+  ansible.builtin.apt:                             
+    name:                                          
+    - influxdb=1.8.10-1  
+    - telegraf
 
 - name: Configure Telegraf
   ansible.builtin.template:
@@ -27,13 +35,12 @@
   ansible.builtin.get_url:
     url: https://github.com/carlpett/influxdb_stats_exporter/releases/download/v0.1.1/influx_stats_exporter_linux_386
     dest: /usr/local/bin/influx_stats_exporter
-    mode: 0641
+    mode: 0755
 
 - name: Create service file for influx stats exporter
   ansible.builtin.template:
     src: influx_stats_exporter.service.j2
     dest: /etc/systemd/system/influx_stats_exporter.service
-    mode: "0644"
   notify: 
     - Reload systemd
     - Restart influx_stats_exporter
@@ -44,15 +51,21 @@
     state: started
     enabled: true
 
-- name: Configure InfluxDB
-  ansible.builtin.template:
-    src: influxdb.conf.j2
-    dest: /etc/influxdb/influxdb.conf
-  notify:
-    - Restart InfluxDB
-
 - name: Create a backup directory
   ansible.builtin.file:
     path: /home/backup/influxdb
     state: directory
     owner: backup
+    group: backup
+    mode: 0775
+
+- name: copy influxdb backup cron job              
+  ansible.builtin.template:                        
+    src: influxdb_cron.j2                   
+    dest: /etc/cron.d/influxdb-backup              
+
+- name: Add InfluxDB CNAME record                                                                  
+  ansible.builtin.include_role:                                                       
+    name: dns_record                                                                  
+  vars:                                                                               
+    dns_record: "influxdb" 

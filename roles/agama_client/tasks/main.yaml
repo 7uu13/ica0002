@@ -7,45 +7,41 @@
 - name: Create user agama-client
   ansible.builtin.user:
     name: agama-client
-    state: present
     system: yes
 
-- name: Put agama_client executable into /usr/local/bin/
-  ansible.builtin.copy:
-    src: agama_client.sh
-    dest: /usr/local/bin/agama_client
-    mode: '0777'
-    owner: agama-client
-    group: agama-client
+- name: Download agama-client configuration
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/romankuchin/ica0002-2024/refs/heads/main/08-logging/08-files/agama-client
+    dest: /usr/local/bin/
+    mode: 0755
+
+- name: Create service file for agama-client
+  ansible.builtin.template:
+    src: agama-client.service.j2
+    dest: /etc/systemd/system/agama-client.service
+  notify:
+    - reload system daemon
+    - Restart agama-client
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: Ensure /etc/agama-client directory exists
   ansible.builtin.file:
     path: /etc/agama-client
     state: directory
-    mode: '0755'
     owner: agama-client
     group: agama-client
 
-- name: Create service file for agama_client
+- name: Add agama-client configuration file
   ansible.builtin.template:
-    src: agama_client.service.j2
-    dest: /etc/systemd/system/agama_client.service
-    mode: '0644'
-  notify: 
-    - Reload systemd
-    - Restart agama_client
-
-- name: Add agama_client configuration file
-  ansible.builtin.template:
-    src: agama_client.conf.j2
+    src: agama-client.conf.j2
     dest: /etc/agama-client/agama-client.conf
-    mode: '0755'
-    owner: agama-client
-    group: agama-client
-  notify: Restart agama_client
+  notify: Restart agama-client
 
 - name: Ensure agama_client service is started and enabled
   ansible.builtin.service:
-    name: agama_client.service
+    name: agama-client.service
     state: started
     enabled: true
+

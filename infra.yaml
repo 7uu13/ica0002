@@ -1,27 +1,25 @@
 ---
 - name: Init
   hosts: all
+  gather_facts: yes
   roles:
     - init
   tags: init
 
 - name: DNS Server
   hosts: dns_servers
-  gather_facts: yes
   roles:
     - bind
   tags: dns
 
 - name: Configure resolv.conf on all machines
   hosts: all
-  gather_facts: yes
   roles:
     - resolver
   tags: rslv
 
 - name: Database Server
   hosts: db_servers
-  gather_facts: yes
   roles:
     - mysql
   tags:
@@ -30,7 +28,6 @@
 
 - name: Web Server
   hosts: web_servers
-  gather_facts: yes
   roles:
     - nginx
     - docker
@@ -43,7 +40,6 @@
 
 - name: Install and configure prometheus
   hosts: prometheus
-  gather_facts: yes
   roles:
     - nginx
     - prometheus
@@ -51,9 +47,9 @@
 
 - name: Install and configure Grafana
   hosts: grafana
-  gather_facts: yes
   roles: 
-    #- nginx
+    - docker
+    - nginx
     - grafana
   tags: graf
 

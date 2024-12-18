@@ -1,5 +1,5 @@
 $TTL	604800
-168.192.in-addr.arpa. 	IN	SOA	7uu13-2.{{ domain_name }}. tuule.{{ domain_name }}. (
+{{ rev_domain }}. 	IN	SOA	{{ hostvars[groups['dns_primary'][0]]['ansible_hostname'] }}.{{ domain_name }}. tuule.{{ domain_name }}. (
 			      2		; Serial
 			 604800		; Refresh
 			  86400		; Retry
@@ -8,7 +8,7 @@ $TTL	604800
 ;
 
 {% for node in groups['dns_servers'] %}
-168.192.in-addr.arpa.	IN	NS	{{ node }}.{{ domain_name }}.
+{{ rev_domain }}.	IN	NS	{{ node }}.{{ domain_name }}.
 {% endfor %}
 
 {% for vm in hostvars %}

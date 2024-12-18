@@ -30,5 +30,12 @@
       AGAMA_DATABASE_URI: "mysql+pymysql://{{ mysql_user }}:{{ mysql_password }}@{{ mysql_host }}/{{ mysql_database }}"
     published_ports: "{{ item }}:8000"
     volumes: /opt/agama:/opt/agama
+    restart_policy: always 
   loop: "{{ docker_ports }}"
   no_log: yes
+
+- name: Add both Agama CNAME records
+  ansible.builtin.include_role:                                                       
+    name: dns_record                                                                  
+  vars:                                                                               
+    dns_record: "www{{ inventory_hostname | replace('7uu13', '') }}" 

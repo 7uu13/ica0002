@@ -9,39 +9,59 @@
       - python3-dnspython
     state: present
 
-- name: Configure DNS forwarders
+- name: Configure Bind9 
   ansible.builtin.template:
-    src: named.conf.options.j2
-    dest: /etc/bind/named.conf.options
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0640
+  loop:
+    - {src: "named.conf.options.j2", dest: "/etc/bind/named.conf.options"}
+    - {src: "named.conf.local.j2", dest: "/etc/bind/named.conf.local"}
   notify: 
     - Restart Bind9 Service
-    - Reload rncd
   no_log: yes
 
-# refactor - merge into same block
-- name: Configure DNS Master Zone
+- name: Configure DNS Master and Reverse Zone
   ansible.builtin.template:
-    src: db.lockbox.sec.j2
-    dest: /var/cache/bind/db.{{ domain_name }}
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     force: no
+  loop:
+    - {src: "db.lockbox.sec.j2", dest: "/var/cache/bind/db.{{ domain_name }}"}
+    - {src: "db.lockbox.sec.rev.j2", dest: "/var/cache/bind/db.{{ domain_name }}.rev"}
   notify: 
     - Restart Bind9 Service
     - Reload rncd
-
-- name: Configure DNS Rev Zone
-  ansible.builtin.template:
-    src: db.lockbox.sec.rev.j2
-    dest: /var/cache/bind/db.{{ domain_name }}.rev
-    force: no
-  notify: 
-    - Restart Bind9 Service
-    - Reload rncd
+  when: inventory_hostname in groups['dns_primary']
 
 - name: Ensure bind9 service is started and enabled
   ansible.builtin.systemd:
     name: bind9
     state: started
     enabled: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Add A Records
+  community.general.nsupdate:
+    key_name: "update-key"
+    key_secret: "{{ dns_update_key }}"
+    key_algorithm: "hmac-sha256"
+    type: "A"
+    server: "{{ ansible_default_ipv4['address'] }}"
+    zone: "{{ domain_name }}."
+    record: "{{ item.key }}.{{ domain_name }}."
+    value: "{{ item.value }}"
+  when: inventory_hostname == groups['dns_primary'][0]
+  loop: "{{ a_records | dict2items }}"
+  no_log: yes
+
+- name: Add both Slave Bind CNAME records
+  ansible.builtin.include_role:                                                       
+    name: dns_record                                                                  
+  vars:                                                                               
+    dns_record: "ns{{ inventory_hostname | replace('7uu13', '') }}" 
 
 - name: Download Bind9 exporter archive
   ansible.builtin.get_url:
@@ -65,24 +85,12 @@
   ansible.builtin.template:
     src: bind_exporter.service.j2
     dest: /etc/systemd/system/prometheus-bind-exporter.service
-  notify: Reload systemd
+  notify: 
+    - Reload systemd
+    - Restart Bind9 Exporter
 
 - name: Ensure bind exporter service is started and enabled
   ansible.builtin.systemd:
     name: prometheus-bind-exporter
     state: started
     enabled: true
-
-- name: Add A Records
-  community.general.nsupdate:
-    key_name: "update-key"
-    key_secret: "{{ dns_update_key }}"
-    key_algorithm: "hmac-sha256"
-    type: "A"
-    server: "{{ ansible_default_ipv4['address'] }}"
-    zone: "{{ domain_name }}."
-    record: "{{ item.key }}.{{ domain_name }}."
-    value: "{{ item.value }}"
-  when: inventory_hostname == groups['dns_primary'][0]
-  loop: "{{ a_records | dict2items }}"
-  no_log: no

@@ -20,7 +20,6 @@
     src: haproxy-exporter.args.j2
     dest: /etc/default/prometheus-haproxy-exporter
   notify:
-    - Restart haproxy
     - Restart haproxy exporter
 
 - name: Ensure that haproxy and its exporter are running and enabled  
@@ -31,3 +30,9 @@
   loop:
     - haproxy
     - prometheus-haproxy-exporter
+
+- name: Add both Haproxy CNAME records
+  ansible.builtin.include_role:                                                       
+    name: dns_record                                                                  
+  vars:                                                                               
+    dns_record: "lb{{ inventory_hostname | replace('7uu13', '') }}" 
